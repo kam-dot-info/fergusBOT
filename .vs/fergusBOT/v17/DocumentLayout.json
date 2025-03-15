@@ -1,0 +1,54 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "C:\\Users\\kamd_pc\\Documents\\fergusBOT\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{6F749D9E-4EE7-490E-B799-6AD83CECA41A}|fergusBOT\\fergusBOT.csproj|c:\\users\\kamd_pc\\documents\\fergusbot\\fergusbot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6F749D9E-4EE7-490E-B799-6AD83CECA41A}|fergusBOT\\fergusBOT.csproj|solutionrelative:fergusbot\\program.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{6F749D9E-4EE7-490E-B799-6AD83CECA41A}|fergusBOT\\fergusBOT.csproj|c:\\users\\kamd_pc\\documents\\fergusbot\\fergusbot\\config\\jsonreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{6F749D9E-4EE7-490E-B799-6AD83CECA41A}|fergusBOT\\fergusBOT.csproj|solutionrelative:fergusbot\\config\\jsonreader.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 200,
+          "SelectedChildIndex": 1,
+          "Children": [
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "jsonREADER.cs",
+              "DocumentMoniker": "C:\\Users\\kamd_pc\\Documents\\fergusBOT\\fergusBOT\\config\\jsonREADER.cs",
+              "RelativeDocumentMoniker": "fergusBOT\\config\\jsonREADER.cs",
+              "ToolTip": "C:\\Users\\kamd_pc\\Documents\\fergusBOT\\fergusBOT\\config\\jsonREADER.cs",
+              "RelativeToolTip": "fergusBOT\\config\\jsonREADER.cs",
+              "ViewState": "AQIAAAYAAAAAAAAAAAAAABgAAAANAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-15T16:47:30.49Z",
+              "EditorCaption": ""
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Program.cs",
+              "DocumentMoniker": "C:\\Users\\kamd_pc\\Documents\\fergusBOT\\fergusBOT\\Program.cs",
+              "RelativeDocumentMoniker": "fergusBOT\\Program.cs",
+              "ToolTip": "C:\\Users\\kamd_pc\\Documents\\fergusBOT\\fergusBOT\\Program.cs",
+              "RelativeToolTip": "fergusBOT\\Program.cs",
+              "ViewState": "AQIAAAUAAAAAAAAAAAAswBkAAAAAAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-03-15T16:46:32.761Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
