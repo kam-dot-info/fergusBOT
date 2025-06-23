@@ -67,14 +67,14 @@ namespace fergusBOT.Commands
         public async Task RandomNumber(InteractionContext ctx, [Option("max", "The maximum number you want to generate.")] double max)
         {
             // Use the existing static rng instance
-            var number = rng.Next(0, (int)max+1);
+            var number = rng.Next(0, (int)max + 1);
             var response = new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
             .WithContent($"{ctx.User.Mention} your random number is: {number}! :confetti_ball:");
             await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource, response)
             .ConfigureAwait(false);
         }
 
-        [SlashCommand ("Hotseat", "Fergus picks a random user from the Voice Channel to be in the hotseat!")]
+        [SlashCommand("Hotseat", "Fergus picks a random user from the Voice Channel to be in the hotseat!")]
         public async Task Hotseat(InteractionContext ctx)
         {
             var voiceState = ctx.Member.VoiceState;
@@ -96,7 +96,7 @@ namespace fergusBOT.Commands
             var diceRolls = new List<int>();
             for (int i = 0; i < 5; i++)
             {
-            diceRolls.Add(rng.Next(1, 7));
+                diceRolls.Add(rng.Next(1, 7));
             }
             var response = new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
             .WithContent($"Here are your dice rolls:\n{string.Join(" - ", diceRolls)}")
@@ -124,8 +124,11 @@ namespace fergusBOT.Commands
             await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource, response)
             .ConfigureAwait(false);
         }
-        [SlashCommand("Split Call", "Fergus will split the calls randomly across 2 channels!")]
-        public async Task SplitCall(InteractionContext ctx)
+        [SlashCommand("Split-Call", "Fergus will split the calls randomly across 2 channels!")]
+        public async Task SplitCall(
+            InteractionContext ctx,
+            [Option("exempt", "Mention users to exempt from being moved (optional).")] string? exemptMentions = null
+        )
         {
             // Only allow command in channel 1386665681944313889
             if (ctx.Channel.Id != 1386665681944313889)
@@ -142,7 +145,7 @@ namespace fergusBOT.Commands
             {
             await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
                 new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
-                .WithContent("You do not have permission to use this command.")
+                .WithContent("You do not have permission to use this command. No hard feelings?")
                 .AsEphemeral(true)).ConfigureAwait(false);
             return;
             }
@@ -172,50 +175,48 @@ namespace fergusBOT.Commands
             }
             }
 
-            // If there are still members left, allow manual exemption via console input (if running interactively)
-    #if DEBUG
-            if (memberList.Count > 0 && System.Console.IsInputRedirected == false)
+            // Parse user mentions from the exemptMentions string and add to exemption list
+            if (!string.IsNullOrWhiteSpace(exemptMentions))
             {
-            System.Console.WriteLine("Current members in VC:");
-            for (int i = 0; i < memberList.Count; i++)
+            var mentionIds = new List<ulong>();
+            var mentionMatches = System.Text.RegularExpressions.Regex.Matches(exemptMentions, @"<@!?(\d+)>");
+            foreach (System.Text.RegularExpressions.Match match in mentionMatches)
             {
-                System.Console.WriteLine($"{i}: {memberList[i].Username}#{memberList[i].Discriminator}");
+                if (ulong.TryParse(match.Groups[1].Value, out ulong id))
+                mentionIds.Add(id);
             }
-            System.Console.WriteLine("Enter comma-separated indices of users to exempt from move (or leave blank):");
-            var input = System.Console.ReadLine();
-            if (!string.IsNullOrWhiteSpace(input))
+
+            foreach (var id in mentionIds)
             {
-                var indices = input.Split(',').Select(s => s.Trim()).Where(s => int.TryParse(s, out _)).Select(int.Parse).Distinct().ToList();
-                foreach (var idx in indices.OrderByDescending(x => x))
+                var user = memberList.FirstOrDefault(m => m.Id == id);
+                if (user != null)
                 {
-                if (idx >= 0 && idx < memberList.Count)
-                {
-                    exemptMembers.Add(memberList[idx]);
-                    memberList.RemoveAt(idx);
-                }
+                exemptMembers.Add(user);
+                memberList.Remove(user);
                 }
             }
             }
-    #endif
+
+
 
             // If majority is exempt, do not allow move
             int totalUsers = memberList.Count + exemptMembers.Count;
             if (memberList.Count == 0 || memberList.Count < exemptMembers.Count)
             {
-            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
-                new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
-                .WithContent("Too many users are exempt from move. Cannot split call.")
-                .AsEphemeral(true)).ConfigureAwait(false);
-            return;
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent("Too many users are exempt from move. Cannot split call.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
             }
 
             // Shuffle the list of members
             for (int i = memberList.Count - 1; i > 0; i--)
             {
-            int j = rng.Next(0, i + 1);
-            var temp = memberList[i];
-            memberList[i] = memberList[j];
-            memberList[j] = temp;
+                int j = rng.Next(0, i + 1);
+                var temp = memberList[i];
+                memberList[i] = memberList[j];
+                memberList[j] = temp;
             }
 
             // Split as evenly as possible
@@ -231,13 +232,13 @@ namespace fergusBOT.Commands
             // Move the members to their respective channels
             foreach (var member in group1)
             {
-            try { await member.ModifyAsync(x => x.VoiceChannel = channel1).ConfigureAwait(false); }
-            catch { /* ignore move errors */ }
+                try { await member.ModifyAsync(x => x.VoiceChannel = channel1).ConfigureAwait(false); }
+                catch { /* ignore move errors */ }
             }
             foreach (var member in group2)
             {
-            try { await member.ModifyAsync(x => x.VoiceChannel = channel2).ConfigureAwait(false); }
-            catch { /* ignore move errors */ }
+                try { await member.ModifyAsync(x => x.VoiceChannel = channel2).ConfigureAwait(false); }
+                catch { /* ignore move errors */ }
             }
 
             // Build a table of assignments
@@ -249,9 +250,9 @@ namespace fergusBOT.Commands
             sb.AppendLine($"| {channel2.Mention} | {string.Join(", ", group2.Select(m => m.Mention))} |");
             if (exemptMembers.Count > 0)
             {
-            sb.AppendLine();
-            sb.AppendLine("**Exempt from move:**");
-            sb.AppendLine(string.Join(", ", exemptMembers.Select(m => m.Mention)));
+                sb.AppendLine();
+                sb.AppendLine("**Exempt from move:**");
+                sb.AppendLine(string.Join(", ", exemptMembers.Select(m => m.Mention)));
             }
 
             await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
@@ -259,7 +260,8 @@ namespace fergusBOT.Commands
                 .WithContent(sb.ToString()))
             .ConfigureAwait(false);
         }
-        [SlashCommand("Match Finished", "Fergus will announce the match finished in the channel!")]
+
+        [SlashCommand("Match-Finished", "Fergus will announce the match finished in the channel!")]
         public async Task MatchFinished(
             InteractionContext ctx,
             [Option("winning_team", "The winning team")] string winningTeam // Dropdown option
@@ -269,21 +271,21 @@ namespace fergusBOT.Commands
             var allowedChannels = new ulong[] { 1386665681944313889, 1386665718199877707 };
             if (!allowedChannels.Contains(ctx.Channel.Id))
             {
-            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
-                new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
-                .WithContent("This command can only be used in the designated channels.")
-                .AsEphemeral(true)).ConfigureAwait(false);
-            return;
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent("This command can only be used in the designated channels.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
             }
 
             // Only allow users with role 1204422815655137280
             if (!ctx.Member.Roles.Any(r => r.Id == 1204422815655137280))
             {
-            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
-                new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
-                .WithContent("You do not have permission to use this command.")
-                .AsEphemeral(true)).ConfigureAwait(false);
-            return;
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent("You do not have permission to use this command.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
             }
 
             // Get the voice channel associated with the text channel
@@ -296,11 +298,11 @@ namespace fergusBOT.Commands
             var members = voiceChannel.Users.ToList();
             if (members.Count == 0)
             {
-            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
-                new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
-                .WithContent("No users found in the associated voice channel.")
-                .AsEphemeral(true)).ConfigureAwait(false);
-            return;
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent("No users found in the associated voice channel.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
             }
 
             // Split members into two teams (same as SplitCall logic)
@@ -315,23 +317,23 @@ namespace fergusBOT.Commands
             string teamName;
             if (string.Equals(winningTeam, "Team A", StringComparison.OrdinalIgnoreCase))
             {
-            winners = group1;
-            losers = group2;
-            teamName = "Team A";
+                winners = group1;
+                losers = group2;
+                teamName = "Team A";
             }
             else if (string.Equals(winningTeam, "Team B", StringComparison.OrdinalIgnoreCase))
             {
-            winners = group2;
-            losers = group1;
-            teamName = "Team B";
+                winners = group2;
+                losers = group1;
+                teamName = "Team B";
             }
             else
             {
-            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
-                new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
-                .WithContent("Invalid team selection. Please pick either Team A or Team B.")
-                .AsEphemeral(true)).ConfigureAwait(false);
-            return;
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent("Invalid team selection. Please pick either Team A or Team B.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
             }
 
             // Load scores from file (simple JSON dictionary)
@@ -339,17 +341,17 @@ namespace fergusBOT.Commands
             Dictionary<ulong, int> scores = new Dictionary<ulong, int>();
             if (System.IO.File.Exists(scoreFile))
             {
-            var json = await System.IO.File.ReadAllTextAsync(scoreFile);
-            scores = System.Text.Json.JsonSerializer.Deserialize<Dictionary<ulong, int>>(json) ?? new Dictionary<ulong, int>();
+                var json = await System.IO.File.ReadAllTextAsync(scoreFile);
+                scores = System.Text.Json.JsonSerializer.Deserialize<Dictionary<ulong, int>>(json) ?? new Dictionary<ulong, int>();
             }
 
             // Add +1 to each winner
             foreach (var member in winners)
             {
-            if (scores.ContainsKey(member.Id))
-                scores[member.Id]++;
-            else
-                scores[member.Id] = 1;
+                if (scores.ContainsKey(member.Id))
+                    scores[member.Id]++;
+                else
+                    scores[member.Id] = 1;
             }
 
             // Save scores
@@ -366,18 +368,112 @@ namespace fergusBOT.Commands
 
             foreach (var member in winners)
             {
-            int total = scores.TryGetValue(member.Id, out var val) ? val : 0;
-            sb.AppendLine($"| {member.Mention} | {total} | +1 |");
+                int total = scores.TryGetValue(member.Id, out var val) ? val : 0;
+                sb.AppendLine($"| {member.Mention} | {total} | +1 |");
             }
             foreach (var member in losers)
             {
-            int total = scores.TryGetValue(member.Id, out var val) ? val : 0;
-            sb.AppendLine($"| {member.Mention} | {total} | 0 |");
+                int total = scores.TryGetValue(member.Id, out var val) ? val : 0;
+                sb.AppendLine($"| {member.Mention} | {total} | 0 |");
             }
 
             await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
             new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
                 .WithContent(sb.ToString())
+                .AsEphemeral(true)).ConfigureAwait(false);
+        }
+
+        [SlashCommand("View-Scores", "Fergus shows you the match scores for a user!")]
+        public async Task ViewScores(
+            InteractionContext ctx,
+            [Option("user", "The user whose scores you want to view.")] DSharpPlus.Entities.DiscordUser user)
+        {
+            var scoreFile = "match_scores.json";
+            Dictionary<ulong, int> scores = new Dictionary<ulong, int>();
+            if (System.IO.File.Exists(scoreFile))
+            {
+                var json = await System.IO.File.ReadAllTextAsync(scoreFile);
+                scores = System.Text.Json.JsonSerializer.Deserialize<Dictionary<ulong, int>>(json) ?? new Dictionary<ulong, int>();
+            }
+
+            if (!scores.ContainsKey(user.Id))
+            {
+                var noRecordResponse = new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent($"{user.Mention} has no recorded match scores yet!")
+                    .AsEphemeral(true);
+
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource, noRecordResponse)
+                    .ConfigureAwait(false);
+                return;
+            }
+
+            int score = scores[user.Id];
+
+            // Sort scores descending and get rank
+            var sorted = scores.OrderByDescending(kv => kv.Value).ThenBy(kv => kv.Key).ToList();
+            int rank = sorted.FindIndex(kv => kv.Key == user.Id) + 1;
+
+            string rankDisplay = $"{rank}";
+            string medal = "";
+            switch (rank)
+            {
+                case 1: medal = "🥇"; break;
+                case 2: medal = "🥈"; break;
+                case 3: medal = "🥉"; break;
+            }
+            if (!string.IsNullOrEmpty(medal))
+                rankDisplay = $"{medal} ({rank} place)";
+            else
+                rankDisplay = $"#{rank} place";
+
+            var response = new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+            .WithContent($"{user.Mention} has **{score}** point{(score == 1 ? "" : "s")}!\nRank: {rankDisplay}")
+            .AsEphemeral(true);
+
+            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource, response)
+            .ConfigureAwait(false);
+        }
+        
+        [SlashCommand("Remove-Point", "Removes 1 point from a user if theyre not participating but in call (@kd.i) obly).")]
+        public async Task RemovePoint(
+            InteractionContext ctx,
+            [Option("user", "The user whose point you want to remove.")] DSharpPlus.Entities.DiscordUser user)
+        {
+            // Only allow user with ID 157187734513909761
+            if (ctx.User.Id != 157187734513909761)
+            {
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent("You do not have permission to use this command.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
+            }
+
+            var scoreFile = "match_scores.json";
+            Dictionary<ulong, int> scores = new Dictionary<ulong, int>();
+            if (System.IO.File.Exists(scoreFile))
+            {
+                var json = await System.IO.File.ReadAllTextAsync(scoreFile);
+                scores = System.Text.Json.JsonSerializer.Deserialize<Dictionary<ulong, int>>(json) ?? new Dictionary<ulong, int>();
+            }
+
+            if (!scores.ContainsKey(user.Id) || scores[user.Id] <= 0)
+            {
+                await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                    new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                    .WithContent($"{user.Mention} has no points to remove.")
+                    .AsEphemeral(true)).ConfigureAwait(false);
+                return;
+            }
+
+            scores[user.Id]--;
+
+            var updatedJson = System.Text.Json.JsonSerializer.Serialize(scores);
+            await System.IO.File.WriteAllTextAsync(scoreFile, updatedJson);
+
+            await ctx.CreateResponseAsync(DSharpPlus.InteractionResponseType.ChannelMessageWithSource,
+                new DSharpPlus.Entities.DiscordInteractionResponseBuilder()
+                .WithContent($"Removed 1 point from {user.Mention}. New total: {scores[user.Id]}")
                 .AsEphemeral(true)).ConfigureAwait(false);
         }
 
