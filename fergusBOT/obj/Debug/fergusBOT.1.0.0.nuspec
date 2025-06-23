@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2012/06/nuspec.xsd">
+  <metadata>
+    <id>fergusBOT</id>
+    <version>1.0.0</version>
+    <authors>fergusBOT</authors>
+    <description>Package Description</description>
+    <repository type="git" commit="dad7219e13f4884175a81a3a9b49826cb66aecba" />
+    <dependencies>
+      <group targetFramework="net8.0">
+        <dependency id="DSharpPlus" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="DSharpPlus.CommandsNext" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="DSharpPlus.Interactivity" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="DSharpPlus.SlashCommands" version="4.5.0" exclude="Build,Analyzers" />
+        <dependency id="Newtonsoft.Json" version="13.0.3" exclude="Build,Analyzers" />
+      </group>
+    </dependencies>
+  </metadata>
+  <files>
+    <file src="D:\GittyHubby\fergusBOT\fergusBOT\bin\Debug\net8.0\fergusBOT.runtimeconfig.json" target="lib\net8.0\fergusBOT.runtimeconfig.json" />
+    <file src="D:\GittyHubby\fergusBOT\fergusBOT\bin\Debug\net8.0\fergusBOT.dll" target="lib\net8.0\fergusBOT.dll" />
+  </files>
+</package>

@@ -1,0 +1,5 @@
+1. go to "fergusBOT\fergusBOT\bin\Debug\net8.0"
+
+2. open fergusBOT.exe
+
+3. whilst open bot will be online

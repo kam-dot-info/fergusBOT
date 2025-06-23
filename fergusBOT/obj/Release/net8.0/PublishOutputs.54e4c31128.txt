@@ -1,0 +1,15 @@
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\Settings.job
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\fergusBOT.exe
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\fergusBOT.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\fergusBOT.deps.json
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\fergusBOT.runtimeconfig.json
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\fergusBOT.pdb
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\ConcurrentCollections.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\DSharpPlus.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\DSharpPlus.CommandsNext.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\DSharpPlus.Interactivity.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\DSharpPlus.SlashCommands.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\Microsoft.Extensions.DependencyInjection.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\Microsoft.Extensions.DependencyInjection.Abstractions.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\Microsoft.Extensions.Logging.Abstractions.dll
+D:\GittyHubby\fergusBOT\fergusBOT\obj\Release\net8.0\PubTmp\Out\app_data\Jobs\Continuous\fergusBOT\Newtonsoft.Json.dll

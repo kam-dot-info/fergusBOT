@@ -1,14 +1,12 @@
 ﻿// See https://aka.ms/new-console-template for more information
-using System.Runtime.CompilerServices; //system references
 using System;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Drawing;
 using DSharpPlus; //DSharpPlus references
 using DSharpPlus.Interactivity;
 using DSharpPlus.SlashCommands;
+using DSharpPlus.Entities;
 using fergusBOT.config;
+
 
 namespace fergusBOT
 {
@@ -17,7 +15,6 @@ namespace fergusBOT
         private static DiscordClient Client { get; set; } = null!;
       
         private static SlashCommandsExtension SlashCommands { get; set; } = null!;
-
 
         static async Task Main(string[] args)
         {
@@ -44,12 +41,13 @@ namespace fergusBOT
 
             SlashCommands = Client.UseSlashCommands(slashConfig);
 
-
             SlashCommands.RegisterCommands<Commands.basicSLASHCOMMANDS>();
 
-            //bot run code
+            await Client.UpdateStatusAsync(new DiscordActivity("in the boot", ActivityType.Playing));
+
             await Client.ConnectAsync();
-            await Task.Delay(-1);
+            await Task.Delay(Timeout.Infinite);
+            
         }
 
         private static Task Client_Ready(DiscordClient sender, DSharpPlus.EventArgs.ReadyEventArgs e)
@@ -57,6 +55,9 @@ namespace fergusBOT
             Console.WriteLine("fergusBot has finished starting up");
             return Task.CompletedTask;
         }
+
     }
+
 }
+
 
